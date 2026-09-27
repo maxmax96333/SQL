@@ -14,7 +14,7 @@ import static com.codeborne.selenide.Selenide.open;
 class LoginTest {
     @BeforeEach
     void openLoginPage() {
-        open("/");
+        open("http://localhost:9999/");
         new LoginPage();
     }
 

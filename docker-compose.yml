@@ -15,9 +15,3 @@ services:
       interval: 5s
       timeout: 5s
       retries: 30
-
-  selenium:
-    image: selenium/standalone-chrome:4.48.0-20260905
-    ports:
-      - '4444:4444'
-    shm_size: 2gb

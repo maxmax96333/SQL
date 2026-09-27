@@ -32,12 +32,4 @@ test {
     systemProperty 'file.encoding', 'UTF-8'
     systemProperty 'chromeoptions.prefs',
             System.getProperty('chromeoptions.prefs', "profile.password_manager_leak_detection=false")
-    systemProperty 'selenide.remote',
-            System.getProperty('selenide.remote', 'http://localhost:4444')
-    systemProperty 'selenide.baseUrl',
-            System.getProperty('selenide.baseUrl', 'http://host.docker.internal:9999')
-
-    if (System.getProperty('selenide.headless') != null) {
-        systemProperty 'selenide.headless', System.getProperty('selenide.headless')
-    }
 }
