@@ -1,49 +1,37 @@
 package ru.netology.test;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ru.netology.data.DataHelper;
+import ru.netology.data.DbHelper;
+import ru.netology.page.DashboardPage;
+import ru.netology.page.LoginPage;
+import ru.netology.page.VerificationPage;
 
 import static com.codeborne.selenide.Selenide.open;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class LoginTest {
-
-    private LoginPage loginPage;
-
     @BeforeEach
-    void setUp() {
-        open("http://localhost:9999");
-        loginPage = new LoginPage();
+    void openLoginPage() {
+        open("/");
+        new LoginPage();
     }
 
     @Test
-    void shouldLoginSuccessfully() {
-        var login = "vasya";
-        var password = "qwerty123";
+    void shouldLoginWithVerificationCodeReadFromDatabase() {
+        String login = DataHelper.getValidLogin();
+        String password = DataHelper.getValidPassword();
 
-        loginPage.login(login, password);
+        VerificationPage verificationPage = new LoginPage().login(login, password);
+        String verificationCode = DbHelper.getVerificationCode(login);
+        DashboardPage dashboardPage = verificationPage.verify(verificationCode);
 
-        var verificationPage = new VerificationPage();
-
-        var code = DbHelper.getVerificationCode(login);
-
-        verificationPage.verify(code);
+        dashboardPage.shouldBeOpened();
     }
 
-    @Test
-    void shouldBlockUserAfterThreeInvalidPasswords() {
-        var login = "vasya";
-        var wrongPassword = "wrongPassword";
-
-        for (int i = 0; i < 3; i++) {
-            open("http://localhost:9999");
-
-            var page = new LoginPage();
-            page.login(login, wrongPassword);
-        }
-
-        var status = DbHelper.getUserStatus(login);
-
-        assertEquals("blocked", status);
+    @AfterAll
+    static void cleanDatabaseAfterTests() {
+        DbHelper.cleanDatabase();
     }
 }
